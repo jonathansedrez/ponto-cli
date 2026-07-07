@@ -1,5 +1,8 @@
 import { createCliRenderer } from "@opentui/core";
 import { Dashboard } from "./dashboard";
+import { initStorage } from "./storage";
+
+await initStorage();
 
 const renderer = await createCliRenderer({ exitOnCtrlC: false });
 
