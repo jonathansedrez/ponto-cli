@@ -1,16 +1,39 @@
-import { createCliRenderer } from "@opentui/core";
-import { Dashboard } from "./dashboard";
+#!/usr/bin/env bun
+import { Command } from "commander";
 import { initStorage } from "./storage";
 
 await initStorage();
 
-const renderer = await createCliRenderer({ exitOnCtrlC: false });
+const program = new Command();
 
-renderer.root.add(Dashboard());
+program
+  .name("ponto")
+  .description("Time-punching CLI for tracking contracted hours")
+  .version("1.0.0");
 
-renderer.keyInput.on("keypress", (key) => {
-  if (key.name === "q") {
-    renderer.destroy();
-    process.exit(0);
-  }
-});
+program
+  .argument("[time]", "Time to stamp (e.g. 10h30, 14h, 13, 10:30)")
+  .option("--date <date>", "Date to stamp (YYYY-MM-DD, yesterday, MM/DD)")
+  .option("--left", "Show contract hours remaining")
+  .option("--watch", "Launch the interactive TUI dashboard")
+  .action(
+    async (
+      _time: string | undefined,
+      options: { date?: string; left?: boolean; watch?: boolean },
+    ) => {
+      if (options.left) {
+        // TODO: implement in PON-11
+        return;
+      }
+
+      if (options.watch) {
+        // TODO: implement in PON-12
+        return;
+      }
+
+      // no time arg → stamp current time
+      // TODO: implement in PON-9 (--date flag in PON-10)
+    },
+  );
+
+program.parse();

@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "bin": {
+    "ponto": "./index.ts"
+  },
   "scripts": {
     "dev": "bun --watch index.ts"
   },
@@ -13,6 +16,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@opentui/core": "^0.4.3"
+    "@opentui/core": "^0.4.3",
+    "commander": "^15.0.0"
   }
 }

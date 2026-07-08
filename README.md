@@ -1,21 +1,30 @@
 # ponto-cli
 
-To install dependencies:
+## Install
+
+Requires [Bun](https://bun.com).
 
 ```bash
+git clone <repo-url>
+cd ponto-cli
 bun install
+bun link
 ```
 
-To run:
+This adds `ponto` to your PATH via `~/.bun/bin`.
+
+## Usage
 
 ```bash
-bun run index.ts
+ponto             # stamp current time
+ponto 10h30       # stamp a specific time
+ponto 10h30 --date yesterday
+ponto --left      # show remaining contract hours
+ponto --watch     # open the TUI dashboard
 ```
 
-To start dev mode (watches for file changes and restarts automatically):
+## Development
 
 ```bash
-bun run dev
+bun run dev       # watch mode
 ```
-
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
