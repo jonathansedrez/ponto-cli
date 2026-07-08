@@ -34,6 +34,13 @@ export function nowMinutes(now: Date): number {
   return now.getHours() * 60 + now.getMinutes();
 }
 
+/** Converts minutes since midnight to a `HH:MM` stamp. */
+export function minutesToStamp(minutes: number): string {
+  const h = Math.floor(minutes / 60) % 24;
+  const m = minutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 /** Formats a duration in minutes as `Xh MMm` (e.g. `2h 30m`). */
 export function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60);

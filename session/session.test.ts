@@ -1,5 +1,10 @@
 import { test, expect } from "bun:test";
-import { buildSessions, totalDurationMinutes, isOngoing } from "./index";
+import {
+  buildSessions,
+  totalDurationMinutes,
+  isOngoing,
+  computeLeaveAt,
+} from "./index";
 
 const at = (h: number, m: number) => new Date(2026, 0, 1, h, m, 0);
 
@@ -80,4 +85,48 @@ test("isOngoing returns true when last session has no out stamp", () => {
 test("isOngoing returns false when all sessions are closed", () => {
   expect(isOngoing(buildSessions(["09:00", "12:00"]))).toBe(false);
   expect(isOngoing([])).toBe(false);
+});
+
+// computeLeaveAt
+
+test("returns leave time when clocked in and goal not yet met", () => {
+  // 3h completed, 8h goal, clocked in at 14:00 → needs 5h more → leave at 19:00
+  const sessions = buildSessions(
+    ["09:00", "12:00", "14:00"],
+    new Date(2026, 0, 1, 14, 30),
+  );
+  expect(computeLeaveAt(sessions, 480)).toEqual({
+    kind: "in-progress",
+    time: "19:00",
+  });
+});
+
+test("returns goal-met when completed sessions already cover the goal", () => {
+  // 8h completed, 8h goal
+  const sessions = buildSessions(["09:00", "17:00"]);
+  expect(computeLeaveAt(sessions, 480)).toEqual({ kind: "goal-met" });
+});
+
+test("returns goal-met when completed sessions exceed the goal", () => {
+  const sessions = buildSessions(["09:00", "18:00"]);
+  expect(computeLeaveAt(sessions, 480)).toEqual({ kind: "goal-met" });
+});
+
+test("returns incomplete when all sessions are closed and goal not met", () => {
+  const sessions = buildSessions(["09:00", "11:00"]);
+  expect(computeLeaveAt(sessions, 480)).toEqual({ kind: "incomplete" });
+});
+
+test("returns incomplete when no sessions exist", () => {
+  expect(computeLeaveAt([], 480)).toEqual({ kind: "incomplete" });
+});
+
+test("accounts only for completed sessions when clocked in", () => {
+  // 2h completed (09:00–11:00), clocked in again at 13:00, goal 4h → needs 2h more → leave 15:00
+  const now = new Date(2026, 0, 1, 13, 30);
+  const sessions = buildSessions(["09:00", "11:00", "13:00"], now);
+  expect(computeLeaveAt(sessions, 240)).toEqual({
+    kind: "in-progress",
+    time: "15:00",
+  });
 });

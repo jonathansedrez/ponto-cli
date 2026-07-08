@@ -1,5 +1,5 @@
-import type { Session } from "./types";
-import { parseMinutes, nowMinutes } from "../shared/time";
+import type { Session, LeaveAtResult } from "./types";
+import { parseMinutes, nowMinutes, minutesToStamp } from "../shared/time";
 
 /**
  * Builds sessions from an ordered list of `HH:MM` stamps.
@@ -40,5 +40,29 @@ export function isOngoing(sessions: Session[]): boolean {
   return last !== undefined && last.ongoing;
 }
 
-export type { Session };
+/**
+ * Computes when the user can leave to hit their daily goal.
+ *
+ * @param sessions - All sessions for the day (completed + possibly one ongoing).
+ * @param goalMinutes - Daily work goal in minutes (e.g. 480 for 8h).
+ */
+export function computeLeaveAt(
+  sessions: Session[],
+  goalMinutes: number,
+): LeaveAtResult {
+  const completedMinutes = sessions
+    .filter((s) => !s.ongoing)
+    .reduce((sum, s) => sum + s.durationMinutes, 0);
+
+  if (completedMinutes >= goalMinutes) return { kind: "goal-met" };
+
+  const lastSession = sessions[sessions.length - 1];
+  if (!lastSession?.ongoing) return { kind: "incomplete" };
+
+  const remaining = goalMinutes - completedMinutes;
+  const leaveMinutes = parseMinutes(lastSession.in) + remaining;
+  return { kind: "in-progress", time: minutesToStamp(leaveMinutes) };
+}
+
+export type { Session, LeaveAtResult };
 export { formatDuration } from "../shared/time";
