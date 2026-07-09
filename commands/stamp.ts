@@ -8,7 +8,10 @@ import {
 
 export async function stamp(timeArg: string | undefined): Promise<void> {
   const now = new Date();
-  const dateStr = now.toISOString().slice(0, 10);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const dateStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
+    now,
+  );
 
   const stampTime = timeArg
     ? parseTimeInput(timeArg)
