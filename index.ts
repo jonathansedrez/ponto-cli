@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { Command } from "commander";
 import { initStorage } from "./storage";
+import { stamp } from "./commands/stamp";
 
 await initStorage();
 
@@ -18,7 +19,7 @@ program
   .option("--watch", "Launch the interactive TUI dashboard")
   .action(
     async (
-      _time: string | undefined,
+      time: string | undefined,
       options: { date?: string; left?: boolean; watch?: boolean },
     ) => {
       if (options.left) {
@@ -31,8 +32,7 @@ program
         return;
       }
 
-      // no time arg → stamp current time
-      // TODO: implement in PON-9 (--date flag in PON-10)
+      await stamp(time);
     },
   );
 
