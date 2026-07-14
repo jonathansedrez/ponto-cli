@@ -10,7 +10,7 @@ mock.module("../storage", () => ({
   },
 }));
 
-let stamp: (timeArg: string | undefined) => Promise<void>;
+let stamp: (timeArg: string | undefined, dateArg?: string) => Promise<void>;
 
 beforeAll(async () => {
   ({ stamp } = await import("./stamp"));
@@ -71,6 +71,16 @@ test("uses current time when no arg given", async () => {
   expect(store[0]?.stamps[0]).toMatch(/^\d{2}:\d{2}$/);
 });
 
+test("rejects duplicate stamp on same minute", async () => {
+  store = [{ date: today, stamps: ["10:00"] }];
+  const exit = spyOn(process, "exit").mockImplementation(() => {
+    throw new Error("process.exit");
+  });
+
+  await expect(stamp("10:00")).rejects.toThrow("process.exit");
+  exit.mockRestore();
+});
+
 test("rejects out-of-order stamp", async () => {
   store = [{ date: today, stamps: ["10:00"] }];
   const exit = spyOn(process, "exit").mockImplementation(() => {
@@ -78,5 +88,45 @@ test("rejects out-of-order stamp", async () => {
   });
 
   await expect(stamp("09:00")).rejects.toThrow("process.exit");
+  exit.mockRestore();
+});
+
+test("--date creates entry for a specific date", async () => {
+  await stamp("09:00", "2026-05-15");
+
+  expect(store).toEqual([{ date: "2026-05-15", stamps: ["09:00"] }]);
+});
+
+test("--date appends to existing entry for that date", async () => {
+  store = [{ date: "2026-05-15", stamps: ["09:00"] }];
+
+  await stamp("17:00", "2026-05-15");
+
+  expect(store[0]?.stamps).toEqual(["09:00", "17:00"]);
+});
+
+test("--date inserts stamp in chronological order", async () => {
+  store = [
+    { date: "2026-05-15", stamps: ["08:00", "12:00", "13:00", "18:00"] },
+  ];
+
+  await stamp("10:00", "2026-05-15");
+
+  expect(store[0]?.stamps).toEqual([
+    "08:00",
+    "10:00",
+    "12:00",
+    "13:00",
+    "18:00",
+  ]);
+});
+
+test("--date rejects duplicate stamp", async () => {
+  store = [{ date: "2026-05-15", stamps: ["09:00"] }];
+  const exit = spyOn(process, "exit").mockImplementation(() => {
+    throw new Error("process.exit");
+  });
+
+  await expect(stamp("09:00", "2026-05-15")).rejects.toThrow("process.exit");
   exit.mockRestore();
 });

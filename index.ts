@@ -32,7 +32,7 @@ program
         return;
       }
 
-      await stamp(time);
+      await stamp(time, options.date);
     },
   );
 

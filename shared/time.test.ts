@@ -1,7 +1,9 @@
 import { test, expect } from "bun:test";
 import {
   parseTimeInput,
+  parseDateInput,
   InvalidTimeError,
+  InvalidDateError,
   parseMinutes,
   formatDuration,
 } from "./time";
@@ -51,4 +53,22 @@ test("formatDuration formats minutes into Xh MMm", () => {
   expect(formatDuration(150)).toBe("2h 30m");
   expect(formatDuration(390)).toBe("6h 30m");
   expect(formatDuration(480)).toBe("8h 00m");
+});
+
+test("parseDateInput accepts valid YYYY-MM-DD", () => {
+  expect(parseDateInput("2026-05-15")).toBe("2026-05-15");
+  expect(parseDateInput("2026-01-01")).toBe("2026-01-01");
+});
+
+test("parseDateInput rejects out-of-range dates", () => {
+  expect(() => parseDateInput("2026-13-01")).toThrow(InvalidDateError);
+  expect(() => parseDateInput("2026-02-30")).toThrow(InvalidDateError);
+});
+
+test("parseDateInput rejects non-YYYY-MM-DD formats", () => {
+  expect(() => parseDateInput("")).toThrow(InvalidDateError);
+  expect(() => parseDateInput("abc")).toThrow(InvalidDateError);
+  expect(() => parseDateInput("yesterday")).toThrow(InvalidDateError);
+  expect(() => parseDateInput("05/15")).toThrow(InvalidDateError);
+  expect(() => parseDateInput("15-07-2026")).toThrow(InvalidDateError);
 });
