@@ -6,6 +6,7 @@ const DASH_WIDTH = 62;
 
 export interface HeaderData {
   dateLabel: string;
+  currentTime: string;
   clockedIn: boolean;
   ongoingDuration: string | null;
   leaveAtLabel: string;
@@ -28,7 +29,10 @@ export function Header(data: HeaderData) {
     ...PONTO_ASCII.map((line) => Text({ content: line, fg: colors.text })),
     Box(
       { flexDirection: "row", justifyContent: "flex-end", width: "100%" },
-      Text({ content: data.dateLabel, fg: colors.text }),
+      Text({
+        content: `${data.dateLabel}  ${data.currentTime}`,
+        fg: colors.text,
+      }),
     ),
     Text({ content: "" }),
     Text({ content: `Status : ${statusText}`, fg: colors.text }),

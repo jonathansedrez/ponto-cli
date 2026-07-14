@@ -59,9 +59,16 @@ async function buildDashboardData(): Promise<DashboardData> {
     leaveAtLabel = "Clock in to see leave time";
   }
 
+  const currentTime = now.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
   return {
     header: {
       dateLabel: formatDateLabel(now),
+      currentTime,
       clockedIn,
       ongoingDuration,
       leaveAtLabel,
