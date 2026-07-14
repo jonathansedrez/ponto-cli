@@ -4,7 +4,18 @@ import { colors } from "../shared/colors";
 
 const DASH_WIDTH = 62;
 
-export function Header() {
+export interface HeaderData {
+  dateLabel: string;
+  clockedIn: boolean;
+  ongoingDuration: string | null;
+  leaveAtLabel: string;
+}
+
+export function Header(data: HeaderData) {
+  const statusText = data.clockedIn
+    ? `● CLOCKED IN  (${data.ongoingDuration})`
+    : "○ CLOCKED OUT";
+
   return Box(
     {
       border: true,
@@ -17,10 +28,10 @@ export function Header() {
     ...PONTO_ASCII.map((line) => Text({ content: line, fg: colors.text })),
     Box(
       { flexDirection: "row", justifyContent: "flex-end", width: "100%" },
-      Text({ content: "Mon, 19 May 2026", fg: colors.text }),
+      Text({ content: data.dateLabel, fg: colors.text }),
     ),
     Text({ content: "" }),
-    Text({ content: "Status : ● CLOCKED IN  (1h 23m ago)", fg: colors.text }),
-    Text({ content: "Leave  : 18:15  to hit daily goal", fg: colors.text }),
+    Text({ content: `Status : ${statusText}`, fg: colors.text }),
+    Text({ content: `Leave  : ${data.leaveAtLabel}`, fg: colors.text }),
   );
 }

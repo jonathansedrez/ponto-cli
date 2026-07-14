@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { initStorage } from "./storage";
 import { stamp } from "./commands/stamp";
 import { left } from "./commands/left";
+import { watch } from "./commands/watch";
 
 await initStorage();
 
@@ -29,7 +30,7 @@ program
       }
 
       if (options.watch) {
-        // TODO: implement in PON-12
+        await watch();
         return;
       }
 

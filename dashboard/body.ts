@@ -1,10 +1,51 @@
 import { Box, Text } from "@opentui/core";
 import { colors } from "../shared/colors";
+import type { Session } from "../session/types";
+import { formatDuration } from "../shared/time";
 
 const DASH_WIDTH = 62;
-const BAR = "██████████░░░░";
+const BAR_WIDTH = 14;
 
-export function Body() {
+function progressBar(current: number, total: number): string {
+  const pct = total > 0 ? Math.min(1, current / total) : 0;
+  const filled = Math.round(pct * BAR_WIDTH);
+  return "█".repeat(filled) + "░".repeat(BAR_WIDTH - filled);
+}
+
+export interface BodyData {
+  sessions: Session[];
+  todayWorkedMinutes: number;
+  dailyGoalMinutes: number;
+  contractLoggedMinutes: number;
+  contractTotalMinutes: number;
+}
+
+export function Body(data: BodyData) {
+  const todayPct =
+    data.dailyGoalMinutes > 0
+      ? Math.round((data.todayWorkedMinutes / data.dailyGoalMinutes) * 100)
+      : 0;
+
+  const contractPct =
+    data.contractTotalMinutes > 0
+      ? Math.round(
+          (data.contractLoggedMinutes / data.contractTotalMinutes) * 100,
+        )
+      : 0;
+
+  const sessionRows =
+    data.sessions.length > 0
+      ? data.sessions.map((s) => {
+          const outStr = s.out ?? "—:—  ";
+          const durationStr = formatDuration(s.durationMinutes);
+          const runningStr = s.ongoing ? "  ▶ running" : "";
+          return Text({
+            content: `${s.in}   ${outStr}   ${durationStr}${runningStr}`,
+            fg: colors.text,
+          });
+        })
+      : [Text({ content: "No stamps today.", fg: colors.text })];
+
   return Box(
     {
       border: true,
@@ -18,12 +59,14 @@ export function Body() {
     Text({ content: "" }),
     Text({ content: "In      Out     Duration", fg: colors.text }),
     Text({ content: "─────   ─────   ──────────────", fg: colors.text }),
-    Text({ content: "10:30   13:00   2h 30m", fg: colors.text }),
-    Text({ content: "14:00   —:—     3h 47m  ▶ running", fg: colors.text }),
+    ...sessionRows,
     Text({ content: "" }),
-    Text({ content: `Today    6h 17m / 8h 00m  ${BAR}  78%`, fg: colors.text }),
     Text({
-      content: `Contract 74% done  ${BAR}  118h / 160h`,
+      content: `Today    ${formatDuration(data.todayWorkedMinutes)} / ${formatDuration(data.dailyGoalMinutes)}  ${progressBar(data.todayWorkedMinutes, data.dailyGoalMinutes)}  ${todayPct}%`,
+      fg: colors.text,
+    }),
+    Text({
+      content: `Contract ${contractPct}% done  ${progressBar(data.contractLoggedMinutes, data.contractTotalMinutes)}  ${formatDuration(data.contractLoggedMinutes)} / ${formatDuration(data.contractTotalMinutes)}`,
       fg: colors.text,
     }),
   );
