@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import { initStorage } from "./storage";
 import { stamp } from "./commands/stamp";
+import { left } from "./commands/left";
 
 await initStorage();
 
@@ -23,7 +24,7 @@ program
       options: { date?: string; left?: boolean; watch?: boolean },
     ) => {
       if (options.left) {
-        // TODO: implement in PON-11
+        await left();
         return;
       }
 
