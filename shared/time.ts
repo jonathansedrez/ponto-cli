@@ -13,20 +13,37 @@ export class InvalidDateError extends Error {
 /**
  * Parses and validates a user-supplied time string into a normalized `HH:MM` stamp.
  *
- * @param input - Time string in `HH:MM` format (e.g. `9:05`, `23:59`).
+ * Accepted formats: `HH:MM`, `HHhMM`, `HHh`, `HH` (case-insensitive h).
  * @returns Normalized `HH:MM` string (e.g. `09:05`).
- * @throws {InvalidTimeError} If the format is invalid or values are out of range.
+ * @throws {InvalidTimeError} If the format is invalid or hour > 23 / minute > 59.
  */
 export function parseTimeInput(input: string): string {
-  const match = input.match(/^(\d{1,2}):(\d{2})$/);
-  if (!match) throw new InvalidTimeError(input);
+  let match = input.match(/^(\d{1,2}):(\d{2})$/);
+  if (match) {
+    const h = parseInt(match[1]!, 10);
+    const m = parseInt(match[2]!, 10);
+    if (h > 23 || m > 59) throw new InvalidTimeError(input);
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
 
-  const h = parseInt(match[1]!, 10);
-  const m = parseInt(match[2]!, 10);
+  // 10h30, 14h, 18H
+  match = input.match(/^(\d{1,2})[hH](\d{2})?$/);
+  if (match) {
+    const h = parseInt(match[1]!, 10);
+    const m = match[2] ? parseInt(match[2], 10) : 0;
+    if (h > 23 || m > 59) throw new InvalidTimeError(input);
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
 
-  if (h > 23 || m > 59) throw new InvalidTimeError(input);
+  // bare hour: 13
+  match = input.match(/^(\d{1,2})$/);
+  if (match) {
+    const h = parseInt(match[1]!, 10);
+    if (h > 23) throw new InvalidTimeError(input);
+    return `${String(h).padStart(2, "0")}:00`;
+  }
 
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  throw new InvalidTimeError(input);
 }
 
 /** Converts a `HH:MM` stamp to minutes since midnight. */
