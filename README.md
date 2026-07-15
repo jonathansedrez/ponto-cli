@@ -44,7 +44,7 @@ Stamps alternate between **IN** and **OUT** automatically. Each day's stamps are
 
 ## How it works
 
-- Stamps are saved in `~/.ponto/data.json`
+- Stamps are saved in `~/.ponto/timesheet.json`
 - Contract hours are configured in `~/.ponto/config.json`
 - `--left` computes remaining hours based on today's stamps and your contract
 - `--watch` opens a live TUI that refreshes every second
