@@ -8,7 +8,6 @@ const DATA_PATH = join(PONTO_DIR, "timesheet.json");
 
 const DEFAULT_CONFIG: Config = {
   contractHours: 160,
-  clockType: "24h",
   workingDaysCurrentMonth: 21,
 };
 

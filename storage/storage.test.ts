@@ -30,7 +30,6 @@ test("readConfig returns default config", async () => {
   const config = await readConfig();
 
   expect(config.contractHours).toBe(160);
-  expect(config.clockType).toBe("24h");
   expect(config.workingDaysCurrentMonth).toBe(21);
 });
 

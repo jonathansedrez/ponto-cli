@@ -40,6 +40,30 @@ test("throws on empty or garbage input", () => {
   expect(() => parseTimeInput("10:3")).toThrow(InvalidTimeError);
 });
 
+test("parses am/pm format", () => {
+  expect(parseTimeInput("9:30am")).toBe("09:30");
+  expect(parseTimeInput("9:30pm")).toBe("21:30");
+  expect(parseTimeInput("12:00pm")).toBe("12:00");
+  expect(parseTimeInput("12:00am")).toBe("00:00");
+  expect(parseTimeInput("1:00pm")).toBe("13:00");
+  expect(parseTimeInput("11:59pm")).toBe("23:59");
+});
+
+test("parses am/pm case-insensitively", () => {
+  expect(parseTimeInput("9:30AM")).toBe("09:30");
+  expect(parseTimeInput("9:30PM")).toBe("21:30");
+  expect(parseTimeInput("9:30Am")).toBe("09:30");
+});
+
+test("throws on invalid am/pm hours", () => {
+  expect(() => parseTimeInput("0:00am")).toThrow(InvalidTimeError);
+  expect(() => parseTimeInput("13:00pm")).toThrow(InvalidTimeError);
+});
+
+test("throws on invalid am/pm minutes", () => {
+  expect(() => parseTimeInput("9:60am")).toThrow(InvalidTimeError);
+});
+
 test("parseMinutes converts HH:MM to minutes since midnight", () => {
   expect(parseMinutes("00:00")).toBe(0);
   expect(parseMinutes("01:00")).toBe(60);

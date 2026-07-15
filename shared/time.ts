@@ -1,6 +1,8 @@
 export class InvalidTimeError extends Error {
   constructor(input: string) {
-    super(`Invalid time: "${input}". Expected HH:MM (e.g. 09:30).`);
+    super(
+      `Invalid time: "${input}". Expected HH:MM (e.g. 09:30) or H:MMam/pm (e.g. 9:30am).`,
+    );
   }
 }
 
@@ -18,6 +20,18 @@ export class InvalidDateError extends Error {
  * @throws {InvalidTimeError} If the format is invalid or values are out of range.
  */
 export function parseTimeInput(input: string): string {
+  const ampmMatch = input.match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+  if (ampmMatch) {
+    const h = parseInt(ampmMatch[1]!, 10);
+    const m = parseInt(ampmMatch[2]!, 10);
+    const period = ampmMatch[3]!.toLowerCase();
+
+    if (h < 1 || h > 12 || m > 59) throw new InvalidTimeError(input);
+
+    const h24 = period === "am" ? (h === 12 ? 0 : h) : h === 12 ? 12 : h + 12;
+    return `${String(h24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+
   const match = input.match(/^(\d{1,2}):(\d{2})$/);
   if (!match) throw new InvalidTimeError(input);
 

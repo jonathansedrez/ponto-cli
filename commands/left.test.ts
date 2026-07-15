@@ -4,7 +4,6 @@ import type { Config, DayEntry } from "../storage/types";
 let store: DayEntry[] = [];
 let config: Config = {
   contractHours: 160,
-  clockType: "24h",
   workingDaysCurrentMonth: 21,
 };
 
@@ -23,7 +22,6 @@ beforeEach(() => {
   store = [];
   config = {
     contractHours: 160,
-    clockType: "24h",
     workingDaysCurrentMonth: 21,
   };
 });

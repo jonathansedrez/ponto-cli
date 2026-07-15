@@ -1,6 +1,5 @@
 export interface Config {
   contractHours: number;
-  clockType: "24h" | "am/pm";
   workingDaysCurrentMonth: number;
 }
 
