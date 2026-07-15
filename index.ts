@@ -4,6 +4,7 @@ import { initStorage } from "./storage";
 import { stamp } from "./commands/stamp";
 import { left } from "./commands/left";
 import { watch } from "./commands/watch";
+import { remove } from "./commands/remove";
 
 await initStorage();
 
@@ -37,5 +38,14 @@ program
       await stamp(time, options.date);
     },
   );
+
+program
+  .command("remove")
+  .description("Remove a stamp from the timesheet")
+  .argument("[index]", "Index of stamp to remove (0-based); defaults to last")
+  .option("--date <date>", "Date to remove from (YYYY-MM-DD, yesterday, MM/DD)")
+  .action(async (index: string | undefined, options: { date?: string }) => {
+    await remove(index, options.date);
+  });
 
 program.parse();
