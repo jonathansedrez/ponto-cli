@@ -18,15 +18,27 @@ test("normalizes single-digit hours", () => {
   expect(parseTimeInput("9:05")).toBe("09:05");
 });
 
-test("throws on missing colon format", () => {
-  expect(() => parseTimeInput("10h30")).toThrow(InvalidTimeError);
-  expect(() => parseTimeInput("13")).toThrow(InvalidTimeError);
-  expect(() => parseTimeInput("14h")).toThrow(InvalidTimeError);
+test("parses HHhMM format", () => {
+  expect(parseTimeInput("10h30")).toBe("10:30");
+  expect(parseTimeInput("9h05")).toBe("09:05");
+});
+
+test("parses bare hour format", () => {
+  expect(parseTimeInput("13")).toBe("13:00");
+  expect(parseTimeInput("0")).toBe("00:00");
+});
+
+test("parses HHh format (h suffix, no minutes)", () => {
+  expect(parseTimeInput("14h")).toBe("14:00");
+  expect(parseTimeInput("18H")).toBe("18:00");
 });
 
 test("throws on out-of-range hours", () => {
   expect(() => parseTimeInput("24:00")).toThrow(InvalidTimeError);
   expect(() => parseTimeInput("99:00")).toThrow(InvalidTimeError);
+  expect(() => parseTimeInput("24")).toThrow(InvalidTimeError);
+  expect(() => parseTimeInput("24h")).toThrow(InvalidTimeError);
+  expect(() => parseTimeInput("24h00")).toThrow(InvalidTimeError);
 });
 
 test("throws on out-of-range minutes", () => {
