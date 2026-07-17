@@ -9,3 +9,5 @@ export interface DayEntry {
 }
 
 export type Timesheet = DayEntry[];
+
+export type Offdays = string[];

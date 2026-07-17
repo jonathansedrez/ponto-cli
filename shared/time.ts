@@ -94,6 +94,12 @@ export function parseDateInput(input: string): string {
   return input;
 }
 
+/** Returns today's date as a `YYYY-MM-DD` string in the local timezone. */
+export function todayString(now: Date): string {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(now);
+}
+
 /** Formats a duration in minutes as `Xh MMm` (e.g. `2h 30m`). */
 export function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60);

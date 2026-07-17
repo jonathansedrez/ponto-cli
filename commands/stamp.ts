@@ -5,6 +5,7 @@ import {
   minutesToStamp,
   nowMinutes,
   parseMinutes,
+  todayString,
 } from "../shared/time";
 
 export async function stamp(
@@ -12,10 +13,7 @@ export async function stamp(
   dateArg?: string,
 ): Promise<void> {
   const now = new Date();
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
-    now,
-  );
+  const todayStr = todayString(now);
 
   const dateStr = dateArg ? parseDateInput(dateArg) : todayStr;
   const stampTime = timeArg

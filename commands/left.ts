@@ -1,30 +1,16 @@
-import { readConfig, readTimesheet } from "../storage";
+import { readConfig, readTimesheet, readOffdays } from "../storage";
 import { buildSessions, totalDurationMinutes } from "../session";
-import { formatDuration } from "../shared/time";
-
-function remainingWorkingDaysInMonth(now: Date): number {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
-    now,
-  );
-  const [y, m] = todayStr.split("-").map(Number);
-
-  const lastDay = new Date(y!, m!, 0);
-
-  let count = 0;
-  const cursor = new Date(todayStr + "T00:00:00");
-  while (cursor <= lastDay) {
-    const dow = cursor.getDay();
-    if (dow !== 0 && dow !== 6) count++;
-    cursor.setDate(cursor.getDate() + 1);
-  }
-  return count;
-}
+import { formatDuration, todayString } from "../shared/time";
+import { workingDaysInMonth, remainingWorkingDaysInMonth } from "../offdays";
 
 export async function left(): Promise<void> {
-  const config = await readConfig();
-  const timesheet = await readTimesheet();
+  const [config, timesheet, offdays] = await Promise.all([
+    readConfig(),
+    readTimesheet(),
+    readOffdays(),
+  ]);
   const now = new Date();
+  const [y, m] = todayString(now).split("-").map(Number);
 
   const contractMinutes = config.contractHours * 60;
 
@@ -34,10 +20,13 @@ export async function left(): Promise<void> {
   }, 0);
 
   const remainingMinutes = Math.max(0, contractMinutes - loggedMinutes);
-  const remainingDays = remainingWorkingDaysInMonth(now);
+  const remainingDays = remainingWorkingDaysInMonth(now, offdays);
+  const totalWorkingDays = workingDaysInMonth(y!, m!, offdays);
 
   console.log(`  Contract total : ${formatDuration(contractMinutes)}`);
   console.log(`  Logged so far  : ${formatDuration(loggedMinutes)}`);
   console.log(`  Remaining      : ${formatDuration(remainingMinutes)}`);
-  console.log(`  Remaining days : ${remainingDays}`);
+  console.log(
+    `  Working days   : ${totalWorkingDays} total, ${remainingDays} remaining`,
+  );
 }

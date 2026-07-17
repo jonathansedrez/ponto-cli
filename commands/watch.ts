@@ -1,5 +1,6 @@
 import { createCliRenderer } from "@opentui/core";
-import { readConfig, readTimesheet } from "../storage";
+import { readConfig, readTimesheet, readOffdays } from "../storage";
+import { workingDaysInMonth } from "../offdays";
 import {
   buildSessions,
   totalDurationMinutes,
@@ -7,12 +8,8 @@ import {
   computeLeaveAt,
   formatDuration,
 } from "../session";
+import { todayString } from "../shared/time";
 import { Dashboard, type DashboardData } from "../dashboard";
-
-function todayString(now: Date): string {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(now);
-}
 
 function formatDateLabel(now: Date): string {
   return now.toLocaleDateString("en-GB", {
@@ -24,18 +21,22 @@ function formatDateLabel(now: Date): string {
 }
 
 async function buildDashboardData(): Promise<DashboardData> {
-  const [config, timesheet] = await Promise.all([
+  const [config, timesheet, offdays] = await Promise.all([
     readConfig(),
     readTimesheet(),
+    readOffdays(),
   ]);
   const now = new Date();
   const todayStr = todayString(now);
+  const [y, m] = todayStr.split("-").map(Number);
   const todayEntry = timesheet.find((d) => d.date === todayStr);
   const sessions = todayEntry ? buildSessions(todayEntry.stamps, now) : [];
 
   const todayWorkedMinutes = totalDurationMinutes(sessions);
+  const dynamicWorkingDays = workingDaysInMonth(y!, m!, offdays);
   const dailyGoalMinutes = Math.round(
-    (config.contractHours * 60) / config.workingDaysCurrentMonth,
+    (config.contractHours * 60) /
+      (dynamicWorkingDays || config.workingDaysCurrentMonth),
   );
   const contractLoggedMinutes = timesheet.reduce((total, day) => {
     return total + totalDurationMinutes(buildSessions(day.stamps, now));

@@ -10,6 +10,7 @@ let config: Config = {
 mock.module("../storage", () => ({
   readConfig: async () => structuredClone(config),
   readTimesheet: async () => structuredClone(store),
+  readOffdays: async () => [],
 }));
 
 let left: () => Promise<void>;
@@ -99,13 +100,13 @@ test("includes ongoing session in logged hours", async () => {
   expect(lines[1]).not.toBe("  Logged so far  : 0h 00m");
 });
 
-test("remaining days is a non-negative integer", async () => {
+test("working days line shows total and remaining counts", async () => {
   const { lines, restore } = captureLog();
 
   await left();
   restore();
 
-  expect(lines[3]).toMatch(/^  Remaining days : \d+$/);
+  expect(lines[3]).toMatch(/^  Working days   : \d+ total, \d+ remaining$/);
 });
 
 test("outputs exactly four lines", async () => {

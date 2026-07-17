@@ -5,6 +5,7 @@ import { stamp } from "./commands/stamp";
 import { left } from "./commands/left";
 import { watch } from "./commands/watch";
 import { remove } from "./commands/remove";
+import { offdays } from "./commands/offdays";
 
 await initStorage();
 
@@ -20,10 +21,16 @@ program
   .option("--date <date>", "Date to stamp (YYYY-MM-DD, yesterday, MM/DD)")
   .option("--left", "Show contract hours remaining")
   .option("--watch", "Launch the interactive TUI dashboard")
+  .option("--offdays", "Open the off-days calendar editor")
   .action(
     async (
       time: string | undefined,
-      options: { date?: string; left?: boolean; watch?: boolean },
+      options: {
+        date?: string;
+        left?: boolean;
+        watch?: boolean;
+        offdays?: boolean;
+      },
     ) => {
       if (options.left) {
         await left();
@@ -32,6 +39,11 @@ program
 
       if (options.watch) {
         await watch();
+        return;
+      }
+
+      if (options.offdays) {
+        await offdays();
         return;
       }
 

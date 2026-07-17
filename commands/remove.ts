@@ -1,15 +1,12 @@
 import { readTimesheet, writeTimesheet } from "../storage";
-import { parseDateInput } from "../shared/time";
+import { parseDateInput, todayString } from "../shared/time";
 
 export async function remove(
   indexArg: string | undefined,
   dateArg?: string,
 ): Promise<void> {
   const now = new Date();
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const todayStr = new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(
-    now,
-  );
+  const todayStr = todayString(now);
   const dateStr = dateArg ? parseDateInput(dateArg) : todayStr;
 
   const timesheet = await readTimesheet();
