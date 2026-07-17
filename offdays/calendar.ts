@@ -5,7 +5,7 @@ const BG = RGBA.defaultBackground();
 const FG = RGBA.defaultForeground();
 const RED = RGBA.fromIndex(1);
 const GRAY = RGBA.fromIndex(8);
-const CURSOR = RGBA.fromIndex(15);
+const HIGHLIGHT = RGBA.fromIndex(12);
 
 const DAYS_HEADER = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -51,15 +51,17 @@ function WeekRows(params: {
   const { days, cursorDay, year, month, todayStr, offdays } = params;
 
   const cells = days.map((day) => {
-    if (day === null) return { indicator: "    ", number: "    ", fg: FG };
+    if (day === null)
+      return { indicator: "    ", number: "    ", fg: FG, bg: BG };
     const state = getDayState(day, year, month, todayStr, offdays);
     const focused = day === cursorDay;
     const isOff = state === "off-weekday" || state === "off-weekend";
     const num = String(day).padStart(2, " ");
     return {
       indicator: isOff ? "  × " : "    ",
-      number: focused ? `[${num}]` : ` ${num} `,
-      fg: focused ? CURSOR : isOff ? RED : FG,
+      number: ` ${num} `,
+      fg: isOff ? RED : FG,
+      bg: focused ? HIGHLIGHT : BG,
     };
   });
 
@@ -71,7 +73,7 @@ function WeekRows(params: {
     ),
     Box(
       { flexDirection: "row", backgroundColor: BG },
-      ...cells.map((c) => Text({ content: c.number, fg: c.fg })),
+      ...cells.map((c) => Text({ content: c.number, fg: c.fg, bg: c.bg })),
     ),
   );
 }
