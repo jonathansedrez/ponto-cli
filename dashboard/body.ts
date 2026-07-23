@@ -12,12 +12,19 @@ function progressBar(current: number, total: number): string {
   return "█".repeat(filled) + "░".repeat(BAR_WIDTH - filled);
 }
 
+export interface YesterdayData {
+  dateLabel: string;
+  sessions: Session[];
+  totalMinutes: number;
+}
+
 export interface BodyData {
   sessions: Session[];
   todayWorkedMinutes: number;
   dailyGoalMinutes: number;
   contractLoggedMinutes: number;
   contractTotalMinutes: number;
+  yesterday: YesterdayData | null;
 }
 
 export function Body(data: BodyData) {
@@ -46,6 +53,33 @@ export function Body(data: BodyData) {
         })
       : [Text({ content: "No stamps today.", fg: colors.text })];
 
+  const yesterdayRows = data.yesterday
+    ? [
+        Text({ content: "" }),
+        Text({
+          content: `Yesterday  ${data.yesterday.dateLabel}`,
+          fg: colors.text,
+        }),
+        Text({
+          content: "─────   ─────   ──────────────",
+          fg: colors.text,
+        }),
+        ...(data.yesterday.sessions.length > 0
+          ? data.yesterday.sessions.map((s) => {
+              const outStr = s.out ?? "—:—  ";
+              return Text({
+                content: `${s.in}   ${outStr}   ${formatDuration(s.durationMinutes)}`,
+                fg: colors.text,
+              });
+            })
+          : [Text({ content: "No stamps.", fg: colors.text })]),
+        Text({
+          content: `Total: ${formatDuration(data.yesterday.totalMinutes)}`,
+          fg: colors.text,
+        }),
+      ]
+    : [];
+
   return Box(
     {
       border: true,
@@ -69,5 +103,6 @@ export function Body(data: BodyData) {
       content: `Contract ${contractPct}% done  ${progressBar(data.contractLoggedMinutes, data.contractTotalMinutes)}  ${formatDuration(data.contractLoggedMinutes)} / ${formatDuration(data.contractTotalMinutes)}`,
       fg: colors.text,
     }),
+    ...yesterdayRows,
   );
 }

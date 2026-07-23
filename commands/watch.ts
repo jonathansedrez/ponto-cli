@@ -32,6 +32,29 @@ async function buildDashboardData(): Promise<DashboardData> {
   const todayEntry = timesheet.find((d) => d.date === todayStr);
   const sessions = todayEntry ? buildSessions(todayEntry.stamps, now) : [];
 
+  const yesterdayDate = new Date(now);
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterdayStr = todayString(yesterdayDate);
+  const yesterdayEntry = timesheet.find((d) => d.date === yesterdayStr);
+  const yesterdayEndOfDay = new Date(
+    yesterdayDate.getFullYear(),
+    yesterdayDate.getMonth(),
+    yesterdayDate.getDate(),
+    23,
+    59,
+    59,
+  );
+  const yesterdaySessions = yesterdayEntry
+    ? buildSessions(yesterdayEntry.stamps, yesterdayEndOfDay)
+    : [];
+  const yesterday = yesterdayEntry
+    ? {
+        dateLabel: formatDateLabel(yesterdayDate),
+        sessions: yesterdaySessions,
+        totalMinutes: totalDurationMinutes(yesterdaySessions),
+      }
+    : null;
+
   const todayWorkedMinutes = totalDurationMinutes(sessions);
   const dynamicWorkingDays = workingDaysInMonth(y!, m!, offdays);
   const dailyGoalMinutes = Math.round(
@@ -80,6 +103,7 @@ async function buildDashboardData(): Promise<DashboardData> {
       dailyGoalMinutes,
       contractLoggedMinutes,
       contractTotalMinutes,
+      yesterday,
     },
   };
 }
