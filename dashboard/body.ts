@@ -1,9 +1,12 @@
-import { Box, Text } from "@opentui/core";
-import { colors } from "../shared/colors";
+import { Box, Text, RGBA } from "@opentui/core";
 import type { Session } from "../session/types";
 import { formatDuration } from "../shared/time";
 
-const DASH_WIDTH = 62;
+const BG = RGBA.defaultBackground();
+const FG = RGBA.defaultForeground();
+const GRAY = RGBA.fromIndex(8);
+const HIGHLIGHT = RGBA.fromIndex(12);
+
 const BAR_WIDTH = 14;
 
 function progressBar(current: number, total: number): string {
@@ -48,61 +51,57 @@ export function Body(data: BodyData) {
           const runningStr = s.ongoing ? "  ▶ running" : "";
           return Text({
             content: `${s.in}   ${outStr}   ${durationStr}${runningStr}`,
-            fg: colors.text,
+            fg: s.ongoing ? HIGHLIGHT : FG,
           });
         })
-      : [Text({ content: "No stamps today.", fg: colors.text })];
+      : [Text({ content: "No stamps today.", fg: GRAY })];
 
   const yesterdayRows = data.yesterday
     ? [
-        Text({ content: "" }),
-        Text({
-          content: `Yesterday  ${data.yesterday.dateLabel}`,
-          fg: colors.text,
-        }),
-        Text({
-          content: "─────   ─────   ──────────────",
-          fg: colors.text,
-        }),
-        ...(data.yesterday.sessions.length > 0
-          ? data.yesterday.sessions.map((s) => {
-              const outStr = s.out ?? "—:—  ";
-              return Text({
-                content: `${s.in}   ${outStr}   ${formatDuration(s.durationMinutes)}`,
-                fg: colors.text,
-              });
-            })
-          : [Text({ content: "No stamps.", fg: colors.text })]),
-        Text({
-          content: `Total: ${formatDuration(data.yesterday.totalMinutes)}`,
-          fg: colors.text,
-        }),
+        Box(
+          { flexDirection: "column", backgroundColor: BG },
+          Text({ content: `Yesterday  ${data.yesterday.dateLabel}`, fg: GRAY }),
+          Text({
+            content: "─────   ─────   ──────────────",
+            fg: GRAY,
+          }),
+          ...(data.yesterday.sessions.length > 0
+            ? data.yesterday.sessions.map((s) =>
+                Text({
+                  content: `${s.in}   ${s.out ?? "—:—  "}   ${formatDuration(s.durationMinutes)}`,
+                  fg: FG,
+                }),
+              )
+            : [Text({ content: "No stamps.", fg: GRAY })]),
+          Text({
+            content: `Total: ${formatDuration(data.yesterday.totalMinutes)}`,
+            fg: GRAY,
+          }),
+        ),
       ]
     : [];
 
   return Box(
-    {
-      border: true,
-      borderStyle: "double",
-      paddingX: 1,
-      paddingY: 1,
-      flexDirection: "column",
-      width: DASH_WIDTH,
-    },
-    Text({ content: "Sessions", fg: colors.text }),
-    Text({ content: "" }),
-    Text({ content: "In      Out     Duration", fg: colors.text }),
-    Text({ content: "─────   ─────   ──────────────", fg: colors.text }),
-    ...sessionRows,
-    Text({ content: "" }),
-    Text({
-      content: `Today    ${formatDuration(data.todayWorkedMinutes)} / ${formatDuration(data.dailyGoalMinutes)}  ${progressBar(data.todayWorkedMinutes, data.dailyGoalMinutes)}  ${todayPct}%`,
-      fg: colors.text,
-    }),
-    Text({
-      content: `Contract ${contractPct}% done  ${progressBar(data.contractLoggedMinutes, data.contractTotalMinutes)}  ${formatDuration(data.contractLoggedMinutes)} / ${formatDuration(data.contractTotalMinutes)}`,
-      fg: colors.text,
-    }),
+    { flexDirection: "column", backgroundColor: BG, gap: 1 },
+    Box(
+      { flexDirection: "column", backgroundColor: BG },
+      Text({ content: "Sessions", fg: GRAY }),
+      Text({ content: "" }),
+      Text({ content: "In      Out     Duration", fg: GRAY }),
+      Text({ content: "─────   ─────   ──────────────", fg: GRAY }),
+      ...sessionRows,
+    ),
+    Box(
+      { flexDirection: "column", backgroundColor: BG },
+      Text({
+        content: `Today    ${formatDuration(data.todayWorkedMinutes)} / ${formatDuration(data.dailyGoalMinutes)}  ${progressBar(data.todayWorkedMinutes, data.dailyGoalMinutes)}  ${todayPct}%`,
+        fg: FG,
+      }),
+      Text({
+        content: `Contract ${contractPct}% done  ${progressBar(data.contractLoggedMinutes, data.contractTotalMinutes)}  ${formatDuration(data.contractLoggedMinutes)} / ${formatDuration(data.contractTotalMinutes)}`,
+        fg: FG,
+      }),
+    ),
     ...yesterdayRows,
   );
 }

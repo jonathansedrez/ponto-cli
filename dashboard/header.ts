@@ -1,8 +1,10 @@
-import { Box, Text } from "@opentui/core";
+import { Box, Text, RGBA } from "@opentui/core";
 import { PONTO_ASCII } from "../shared/ascii-art";
-import { colors } from "../shared/colors";
 
-const DASH_WIDTH = 62;
+const BG = RGBA.defaultBackground();
+const FG = RGBA.defaultForeground();
+const GRAY = RGBA.fromIndex(8);
+const HIGHLIGHT = RGBA.fromIndex(12);
 
 export interface HeaderData {
   dateLabel: string;
@@ -16,26 +18,22 @@ export function Header(data: HeaderData) {
   const statusText = data.clockedIn
     ? `● CLOCKED IN  (${data.ongoingDuration})`
     : "○ CLOCKED OUT";
+  const statusColor = data.clockedIn ? HIGHLIGHT : GRAY;
 
   return Box(
-    {
-      border: true,
-      borderStyle: "double",
-      paddingX: 1,
-      paddingY: 1,
-      flexDirection: "column",
-      width: DASH_WIDTH,
-    },
-    ...PONTO_ASCII.map((line) => Text({ content: line, fg: colors.text })),
+    { flexDirection: "column", backgroundColor: BG, gap: 1 },
     Box(
-      { flexDirection: "row", justifyContent: "flex-end", width: "100%" },
-      Text({
-        content: `${data.dateLabel}  ${data.currentTime}`,
-        fg: colors.text,
-      }),
+      { flexDirection: "column", backgroundColor: BG },
+      ...PONTO_ASCII.map((line) => Text({ content: line, fg: FG })),
     ),
-    Text({ content: "" }),
-    Text({ content: `Status : ${statusText}`, fg: colors.text }),
-    Text({ content: `Leave  : ${data.leaveAtLabel}`, fg: colors.text }),
+    Box(
+      { flexDirection: "row", justifyContent: "flex-end" },
+      Text({ content: `${data.dateLabel}  ${data.currentTime}`, fg: GRAY }),
+    ),
+    Box(
+      { flexDirection: "column", backgroundColor: BG },
+      Text({ content: `Status : ${statusText}`, fg: statusColor }),
+      Text({ content: `Leave  : ${data.leaveAtLabel}`, fg: FG }),
+    ),
   );
 }
