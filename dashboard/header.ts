@@ -12,11 +12,13 @@ export interface HeaderData {
   clockedIn: boolean;
   ongoingDuration: string | null;
   leaveAtLabel: string;
+  tickFrame: number;
 }
 
 export function Header(data: HeaderData) {
+  const dot = data.clockedIn && data.tickFrame % 2 === 0 ? "●" : "○";
   const statusText = data.clockedIn
-    ? `● CLOCKED IN  (${data.ongoingDuration})`
+    ? `${dot} CLOCKED IN  (${data.ongoingDuration})`
     : "○ CLOCKED OUT";
   const statusColor = data.clockedIn ? HIGHLIGHT : GRAY;
 

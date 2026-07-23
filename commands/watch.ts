@@ -96,6 +96,7 @@ async function buildDashboardData(): Promise<DashboardData> {
       clockedIn,
       ongoingDuration,
       leaveAtLabel,
+      tickFrame: Math.floor(Date.now() / 500),
     },
     body: {
       sessions,
@@ -141,7 +142,7 @@ export async function watch(): Promise<void> {
   renderer.requestLive();
   renderer.start();
 
-  const interval = setInterval(refresh, 1000);
+  const interval = setInterval(refresh, 500);
 
   renderer.keyInput.on("keypress", async (event) => {
     if (event.name === "q" || (event.ctrl && event.name === "c")) {
@@ -149,8 +150,6 @@ export async function watch(): Promise<void> {
       restoreTabTitle();
       renderer.destroy();
       process.exit(0);
-    } else if (event.name === "r") {
-      await refresh();
     }
   });
 }
