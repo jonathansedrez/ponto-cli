@@ -6,6 +6,7 @@ import { left } from "./commands/left";
 import { watch } from "./commands/watch";
 import { remove } from "./commands/remove";
 import { offdays } from "./commands/offdays";
+import { checkForUpdate } from "./shared/update-check";
 
 await initStorage();
 
@@ -61,3 +62,5 @@ program
   });
 
 program.parse();
+
+await checkForUpdate();

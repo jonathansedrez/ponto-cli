@@ -36,7 +36,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build binary
-        run: bun build --compile --target=${{ matrix.target }} index.ts --outfile ${{ matrix.asset }}
+        run: bun build --compile --target=${{ matrix.target }} --define 'PONTO_VERSION="${{ github.ref_name }}"' index.ts --outfile ${{ matrix.asset }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
