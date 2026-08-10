@@ -64,11 +64,8 @@ else
     [[ "$SHELL" == */bash ]] && SHELL_PROFILE="$HOME/.bashrc"
     echo "" >> "$SHELL_PROFILE"
     echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_PROFILE"
-    echo "Added $INSTALL_DIR to PATH in $SHELL_PROFILE"
     export PATH="$INSTALL_DIR:$PATH"
   fi
 fi
 
-echo ""
-echo "ponto $TAG installed to $INSTALL_DIR/$BIN_NAME"
-echo "Run 'ponto --help' to get started."
+echo "ponto $TAG installed. Run 'ponto --help' to get started."

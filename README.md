@@ -9,7 +9,7 @@ Stamp in and out like a time clock. See what's left in your contract. No account
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jonathansedrez/ponto-cli/main/install.sh | bash
+source <(curl -fsSL https://raw.githubusercontent.com/jonathansedrez/ponto-cli/main/install.sh)
 ```
 
 The script detects your OS and architecture, downloads the correct binary from the latest release, and installs it to `/usr/local/bin` (or `~/.local/bin` if you don't have write access).
