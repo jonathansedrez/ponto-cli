@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name("ponto")
   .description("Time-punching CLI for tracking contracted hours")
-  .version("1.1.1")
+  .version("1.1.2")
   .addHelpText(
     "after",
     `
