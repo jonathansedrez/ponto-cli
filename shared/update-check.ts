@@ -61,8 +61,12 @@ export async function checkForUpdate() {
   }
 
   if (latest && latest !== CURRENT_VERSION) {
+    const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`;
+    const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;
     console.log(
-      `\n  Update available: ${CURRENT_VERSION} → ${latest}\n  Run to update: curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash\n`,
+      yellow(
+        `\n  Update available: ${CURRENT_VERSION} → ${latest}\n  Run to update: ${bold(`source <(curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh)`)}\n`,
+      ),
     );
   }
 }

@@ -41,9 +41,9 @@ ponto --date 2026-07-10      # stamp on a specific date
 ponto --date yesterday       # stamp on yesterday
 ponto --left                 # show contract hours remaining today
 ponto --watch                # open the interactive TUI dashboard
-ponto remove                 # remove the last stamp
-ponto remove 2               # remove stamp at index 2
-ponto remove --date yesterday  # remove last stamp from yesterday
+ponto --remove               # remove the last stamp
+ponto --remove 2             # remove stamp at index 2
+ponto --remove --date yesterday  # remove last stamp from yesterday
 ```
 
 Stamps alternate between **IN** and **OUT** automatically. Each day's stamps are stored sorted — backfilling a past date just works.
