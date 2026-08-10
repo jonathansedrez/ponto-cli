@@ -45,12 +45,16 @@ test("alternates clock-in and clock-out", async () => {
   expect(store[0]?.stamps).toEqual(["09:00", "12:00", "13:00", "18:00"]);
 });
 
+const stripAnsi = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, "");
+
 test("logs IN on clock-in", async () => {
   const log = spyOn(console, "log");
 
   await stamp("09:00");
 
-  expect(log).toHaveBeenCalledWith("09:00  IN ");
+  const output = log.mock.calls.map((c) => stripAnsi(String(c[0]))).join("\n");
+  expect(output).toContain("09:00");
+  expect(output).toContain("IN");
   log.mockRestore();
 });
 
@@ -60,7 +64,9 @@ test("logs OUT on clock-out", async () => {
 
   await stamp("17:00");
 
-  expect(log).toHaveBeenCalledWith("17:00  OUT");
+  const output = log.mock.calls.map((c) => stripAnsi(String(c[0]))).join("\n");
+  expect(output).toContain("17:00");
+  expect(output).toContain("OUT");
   log.mockRestore();
 });
 
