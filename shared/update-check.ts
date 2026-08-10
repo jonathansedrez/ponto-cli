@@ -48,6 +48,8 @@ async function fetchLatestVersion(): Promise<string | null> {
 }
 
 export async function checkForUpdate() {
+  if (CURRENT_VERSION === "dev") return;
+
   let latest: string | null = null;
 
   const cache = await readCache();
