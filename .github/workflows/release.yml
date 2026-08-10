@@ -20,10 +20,6 @@ jobs:
             runner: ubuntu-24.04-arm
             asset: ponto-linux-arm64
             native_pkg: "@opentui/core-linux-arm64"
-          - target: bun-darwin-x64
-            runner: macos-latest
-            asset: ponto-darwin-x64
-            native_pkg: "@opentui/core-darwin-x64"
           - target: bun-darwin-arm64
             runner: macos-latest
             asset: ponto-darwin-arm64

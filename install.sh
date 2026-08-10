@@ -35,6 +35,13 @@ if [[ -z "$TAG" ]]; then
   exit 1
 fi
 
+if [[ "$OS" == "darwin" && "$ARCH" == "x64" ]]; then
+  echo "Pre-built binaries are not available for Intel Macs."
+  echo "Install from source instead:"
+  echo "  git clone https://github.com/${REPO} && cd ponto-cli && bun install && bun link"
+  exit 1
+fi
+
 ASSET="${BIN_NAME}-${OS}-${ARCH}"
 URL="https://github.com/${REPO}/releases/download/${TAG}/${ASSET}"
 
