@@ -60,10 +60,12 @@ else
   mv "$TMP" "$HOME/.local/bin/$BIN_NAME"
   INSTALL_DIR="$HOME/.local/bin"
   if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-    echo ""
-    echo "NOTE: $INSTALL_DIR is not in your PATH."
-    echo "Add this to your shell profile:"
-    echo "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+    SHELL_PROFILE="$HOME/.zshrc"
+    [[ "$SHELL" == */bash ]] && SHELL_PROFILE="$HOME/.bashrc"
+    echo "" >> "$SHELL_PROFILE"
+    echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_PROFILE"
+    echo "Added $INSTALL_DIR to PATH in $SHELL_PROFILE"
+    export PATH="$INSTALL_DIR:$PATH"
   fi
 fi
 
