@@ -21,7 +21,7 @@ jobs:
             asset: ponto-linux-arm64
             native_pkg: "@opentui/core-linux-arm64"
           - target: bun-darwin-x64
-            runner: macos-13
+            runner: macos-latest
             asset: ponto-darwin-x64
             native_pkg: "@opentui/core-darwin-x64"
           - target: bun-darwin-arm64
