@@ -9,6 +9,15 @@
             "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; bunx prettier --write \"$f\"; } 2>/dev/null || true"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // \"\"' | { read -r f; case \"$f\" in */index.ts|*/commands/*.ts) echo \"[ponto help] Command file changed — updated --help output:\"; cd \"$(dirname \"$(dirname \"$f\")\" 2>/dev/null || echo .)\" && bun run index.ts --help 2>&1 ;; esac; } 2>/dev/null || true"
+          }
+        ]
       }
     ]
   }
