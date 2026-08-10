@@ -8,10 +8,18 @@ Stamp in and out like a time clock. See what's left in your contract. No account
 
 ## Installation
 
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonathansedrez/ponto-cli/main/install.sh | bash
+```
+
+The script detects your OS and architecture, downloads the correct binary from the latest release, and installs it to `/usr/local/bin` (or `~/.local/bin` if you don't have write access).
+
+**Install from source**
+
 Requires [Bun](https://bun.sh).
 
 ```bash
-git clone https://github.com/jonathandebrittosedrez/ponto-cli
+git clone https://github.com/jonathansedrez/ponto-cli
 cd ponto-cli
 bun install
 bun link
