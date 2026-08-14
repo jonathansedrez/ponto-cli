@@ -17,6 +17,13 @@ export function ReviewFooter(
   mode: "navigating" | "editing" | "confirming",
   errorMessage: string | null,
 ) {
+  if (errorMessage) {
+    return Box(
+      { flexDirection: "row", backgroundColor: BG },
+      Text({ content: errorMessage, fg: RED }),
+    );
+  }
+
   if (mode === "confirming") {
     return Box(
       { flexDirection: "row", backgroundColor: BG, gap: 1 },
@@ -25,13 +32,6 @@ export function ReviewFooter(
       hint("yes"),
       key("n"),
       hint("no"),
-    );
-  }
-
-  if (errorMessage) {
-    return Box(
-      { flexDirection: "row", backgroundColor: BG },
-      Text({ content: errorMessage, fg: RED }),
     );
   }
 
