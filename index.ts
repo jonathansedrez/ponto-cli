@@ -6,6 +6,7 @@ import { left } from "./commands/left";
 import { watch } from "./commands/watch";
 import { remove } from "./commands/remove";
 import { offdays } from "./commands/offdays";
+import { review } from "./commands/review";
 import { checkForUpdate } from "./shared/update-check";
 
 await initStorage();
@@ -30,7 +31,8 @@ Examples:
   $ ponto --offdays                Edit off-days calendar (space to toggle, q to quit)
   $ ponto --remove                 Remove the last stamp of today
   $ ponto --remove 2               Remove stamp at index 2 (0-based)
-  $ ponto --remove --date yesterday  Remove last stamp from yesterday`,
+  $ ponto --remove --date yesterday  Remove last stamp from yesterday
+  $ ponto --review                  Review incomplete days and fill in missing stamps`,
   );
 
 program
@@ -46,6 +48,7 @@ program
     "--remove [index]",
     "Remove a stamp (index is 0-based; defaults to last)",
   )
+  .option("--review", "Review incomplete days and fill in missing stamps")
   .action(
     async (
       time: string | undefined,
@@ -55,6 +58,7 @@ program
         watch?: boolean;
         offdays?: boolean;
         remove?: string | boolean;
+        review?: boolean;
       },
     ) => {
       if (options.left) {
@@ -76,6 +80,11 @@ program
         const index =
           options.remove === true ? undefined : String(options.remove);
         await remove(index, options.date);
+        return;
+      }
+
+      if (options.review) {
+        await review();
         return;
       }
 
