@@ -1,5 +1,6 @@
 import { readTimesheet, writeTimesheet } from "../storage";
 import type { Timesheet } from "../storage/types";
+import { buildReviewEntries } from "../review";
 import {
   parseTimeInput,
   parseDateInput,
@@ -62,6 +63,16 @@ function findPrev(
     };
   }
   return null;
+}
+
+function warnIncomplete(timesheet: Timesheet, todayStr: string) {
+  const incomplete = buildReviewEntries(timesheet, todayStr);
+  if (incomplete.length > 0) {
+    const n = incomplete.length;
+    console.log(
+      `\n  ${ylw("!")}  You have ${n} incomplete day${n === 1 ? "" : "s"}. Run 'ponto --review' to mark them.`,
+    );
+  }
 }
 
 function printResult(
@@ -133,6 +144,7 @@ export async function stamp(
       { date: dateStr, time: stampTime, label: isClockIn ? "IN" : "OUT" },
       todayStr,
     );
+    warnIncomplete(timesheet, todayStr);
     return;
   }
 
@@ -161,4 +173,5 @@ export async function stamp(
     { date: dateStr, time: stampTime, label: isClockIn ? "IN" : "OUT" },
     todayStr,
   );
+  warnIncomplete(timesheet, todayStr);
 }
